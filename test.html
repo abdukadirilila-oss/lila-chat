@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<button onclick="testCam()">Jaribu Kamera</button>
+<video id="v" autoplay playsinline style="width:100%"></video>
+<script>
+async function testCam(){
+  try{
+    const s = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+    document.getElementById('v').srcObject = s;
+    alert('Kamera INAFANYA! ✅');
+  }catch(e){
+    alert('Kamera IMEFELI ❌: ' + e.name + ' - ' + e.message);
+    console.log(e);
+  }
+}
+</script>
+</body>
+</html>

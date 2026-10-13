@@ -1,64 +1,165 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LILA PRO</title>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>LILA PRO</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}body{background:#111b21;height:100vh;overflow:hidden;font-family:sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+body{background:#111b21;height:100dvh;overflow:hidden}
+#app{display:flex;height:100dvh;width:100vw}
 #login{position:fixed;inset:0;background:#111b21;z-index:1000;display:flex;align-items:center;justify-content:center}
-.login-box{background:#202c33;padding:25px;border-radius:12px;width:90%;max-width:350px;color:#fff}
-.login-box input{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;background:#2a3942;color:#fff}
-.login-box button{width:100%;padding:12px;background:#00a884;border:none;border-radius:8px;color:#fff;font-weight:bold}
-#app{display:flex;height:100vh}
-.sidebar{width:35%;min-width:300px;background:#111b21;border-right:1px solid #222d34;display:flex;flex-direction:column}
-.s-head{background:#202c33;padding:12px;color:#fff;display:flex;justify-content:space-between}
-.chat-item{padding:12px;display:flex;gap:10px;border-bottom:1px solid #1f2c34;color:#fff;cursor:pointer}
-.avatar{width:45px;height:45px;border-radius:50%;background:#00a884;display:flex;align-items:center;justify-content:center;font-weight:bold}
-.main{flex:1;display:flex;flex-direction:column;background:#0b141a}
-.m-head{background:#202c33;padding:10px;display:flex;justify-content:space-between;color:#fff}
-.msgs{flex:1;overflow-y:auto;padding:15px}
-.bubble{max-width:70%;padding:8px 10px;margin:4px 0;border-radius:8px}
-.me{background:#005c4b;color:#fff;margin-left:auto}.other{background:#202c33;color:#fff}
-.input-bar{background:#202c33;padding:8px;display:flex;gap:8px}.input-bar input{flex:1;padding:10px;border-radius:20px;border:none;background:#2a3942;color:#fff}
-#incomingModal{position:fixed;inset:0;background:#111b21;z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;color:#fff}
-.big-av{width:120px;height:120px;border-radius:50%;background:#00a884;display:flex;align-items:center;justify-content:center;font-size:50px;margin-bottom:15px}
-#callScreen{position:fixed;inset:0;background:#000;z-index:10000;display:none;flex-direction:column}
-#videoUI{flex:1;position:relative;width:100%;height:100%;background:#000}
-#remoteVideo{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;background:#000}
-#localVideo{position:absolute;bottom:100px;right:15px;width:110px;height:150px;border-radius:12px;border:2px solid #fff;object-fit:cover;z-index:10;background:#333}
-.controls{position:absolute;bottom:0;left:0;right:0;padding:20px;display:flex;justify-content:center;gap:20px;z-index:20;background:linear-gradient(transparent, #000)}
-.ctrl{width:50px;height:50px;border-radius:50%;border:none;font-size:20px}.hangup{background:#f15c6d;color:#fff;width:60px;height:60px}.gray{background:#3b4a54;color:#fff}
-#voiceUI{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}
-@media(max-width:768px){.sidebar{width:100%;position:absolute;z-index:5;height:100%}.sidebar.hide{transform:translateX(-100%)}.main{width:100%}}
-</style></head><body>
-<div id="login"><div class="login-box"><h3 style="color:#00a884">LILA PRO</h3><input id="lName" placeholder="Jina"><input id="lPhone" placeholder="Namba"><button onclick="doLogin()">INGIA</button></div></div>
-<div id="app"><div class="sidebar" id="sidebar"><div class="s-head"><b>LILA PRO</b><span>Online</span></div><div id="chatList"></div></div><div class="main"><div class="m-head"><div style="display:flex;gap:10px;align-items:center"><button onclick="showSidebar()" style="background:none;border:none;color:#fff;font-size:22px">‹</button><div class="avatar" id="topAv">?</div><div><div id="topName">Chagua mtu</div><div id="topStatus" style="font-size:12px;color:#8696a0">Online</div></div></div><div><button onclick="makeCall(false)" style="background:none;border:none;font-size:22px">📞</button><button onclick="makeCall(true)" style="background:none;border:none;font-size:22px">🎥</button></div></div><div class="msgs" id="msgs"></div><div class="input-bar"><input id="msgInput" placeholder="Andika..."><button onclick="sendMsg()" style="background:#00a884;border:none;width:40px;height:40px;border-radius:50%;color:#fff">➤</button></div></div></div>
-<div id="incomingModal"><div class="big-av" id="incAv">K</div><h2 id="incName"></h2><p id="incType" style="color:#8696a0;margin:5px"></p><div style="display:flex;gap:30px;margin-top:25px"><button class="ctrl hangup" onclick="reject()">✕</button><button class="ctrl gray" style="background:#00a884;width:60px;height:60px" onclick="accept()">📞</button></div></div>
-<div id="callScreen"><div id="voiceUI"><div class="big-av" id="callAv">K</div><h2 id="callName"></h2><p id="callStat" style="color:#8696a0">Inapiga...</p><p id="timer" style="color:#8696a0"></p></div><div id="videoUI" style="display:none"><video id="remoteVideo" autoplay playsinline></video><video id="localVideo" autoplay playsinline muted></video></div><div class="controls"><button class="ctrl gray" onclick="toggleMute()">🎤</button><button class="ctrl gray" id="bVoice" onclick="toVoice()">📹</button><button class="ctrl gray" id="bVideo" onclick="toVideo()" style="display:none">🎥</button><button class="ctrl hangup" onclick="end()">✕</button></div></div>
+.login-box{background:#202c33;padding:30px;border-radius:12px;width:90%;max-width:360px;color:white}
+.login-box input{width:100%;padding:14px;margin:10px 0;border-radius:8px;border:none;background:#2a3942;color:white;outline:none}
+.login-box button{width:100%;padding:14px;background:#00a884;border:none;border-radius:8px;color:white;font-weight:bold}
+.sidebar{width:35%;min-width:320px;max-width:450px;background:#111b21;border-right:1px solid #222d34;display:flex;flex-direction:column}
+.s-head{background:#202c33;padding:12px 16px;display:flex;justify-content:space-between;color:#e9edef}
+.chat-item{padding:12px 16px;display:flex;gap:12px;cursor:pointer;border-bottom:1px solid #1f2c34;color:white}
+.chat-item.active{background:#2a3942}
+.avatar{width:49px;height:49px;border-radius:50%;background:#00a884;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:20px}
+.main{flex:1;display:flex;flex-direction:column;background:#0b141a;position:relative}
+.m-head{background:#202c33;padding:8px 16px;display:flex;justify-content:space-between;color:white}
+.msgs{flex:1;overflow-y:auto;padding:16px}
+.bubble{max-width:70%;padding:8px 10px;margin:4px 0;border-radius:8px;font-size:14.5px}
+.me{background:#005c4b;color:white;margin-left:auto}
+.other{background:#202c33;color:white}
+.input-bar{background:#202c33;padding:6px 10px;display:flex;gap:8px;align-items:center}
+.input-bar input{flex:1;background:#2a3942;border:none;padding:11px 14px;border-radius:21px;color:white;outline:none}
+.send-btn{background:#00a884;color:white;border:none;width:42px;height:42px;border-radius:50%;font-size:18px}
+.icon-btn{background:transparent;border:none;color:#8696a0;font-size:22px;width:42px;height:42px;cursor:pointer}
+#callScreen{position:fixed;inset:0;background:#000;z-index:9999;display:none;flex-direction:column}
+#voiceUI{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white}
+.big-av{width:130px;height:130px;border-radius:50%;background:#00a884;display:flex;align-items:center;justify-content:center;font-size:60px;margin-bottom:16px}
+#videoUI{flex:1;position:relative;background:#000;width:100%;height:100%}
+#remoteVideo{width:100%;height:100%;object-fit:cover;background:#000;position:absolute;inset:0}
+#localVideo{position:absolute;bottom:110px;right:16px;width:120px;height:170px;border-radius:14px;object-fit:cover;border:2px solid #fff;z-index:20;background:#222;box-shadow:0 8px 24px rgba(0,0,0,0.7)}
+.call-controls{position:absolute;bottom:0;left:0;right:0;padding:24px;display:flex;justify-content:center;gap:18px;z-index:30;background:linear-gradient(transparent,rgba(0,0,0,0.9))}
+.ctrl{width:52px;height:52px;border-radius:50%;border:none;font-size:22px;cursor:pointer}
+.hangup{background:#f15c6d;color:white;width:62px;height:62px;font-size:28px}
+.gray{background:#3b4a54;color:white}
+.green{background:#00a884;color:white}
+#incomingModal{position:fixed;inset:0;background:#111b21;z-index:10000;display:none;align-items:center;justify-content:center;flex-direction:column;color:white}
+@media(max-width:768px){.sidebar{width:100%;max-width:100%;position:absolute;z-index:10;height:100%;transition:0.3s}.sidebar.hide{transform:translateX(-100%)}.main{width:100%;height:100%;position:absolute;z-index:5}.main.show{z-index:20}}
+</style>
+</head>
+<body>
+<div id="login"><div class="login-box"><h2 style="color:#00a884">LILA PRO</h2><input id="lName" placeholder="Jina lako"><input id="lPhone" placeholder="Namba"><button onclick="doLogin()">INGIA</button></div></div>
+<div id="app"><div class="sidebar" id="sidebar"><div class="s-head"><b>LILA PRO</b><span style="font-size:11px;background:#00a884;padding:3px 7px;border-radius:10px">● Online</span></div><div id="chatList"></div></div><div class="main" id="mainChat"><div class="m-head"><div style="display:flex;align-items:center;gap:10px"><button id="backBtn" class="icon-btn" onclick="showSidebar()" style="display:none">‹</button><div class="avatar" id="topAvatar">?</div><div><div id="topName" style="font-weight:600">Chagua mtu</div><div id="topStatus" style="font-size:12px;color:#8696a0">Online</div></div></div><div style="display:flex;gap:4px"><button class="icon-btn" onclick="makeCall(false)">📞</button><button class="icon-btn" onclick="makeCall(true)">🎥</button></div></div><div class="msgs" id="msgs"></div><div class="input-bar"><input id="msgInput" placeholder="Andika ujumbe..." onkeydown="if(event.key==='Enter')sendMsg()"><button class="send-btn" onclick="sendMsg()">➤</button></div></div></div>
+<div id="incomingModal"><div class="big-av" id="incAvatar">K</div><h2 id="incName"></h2><p id="incType" style="color:#8696a0;margin:8px"></p><div style="display:flex;gap:30px;margin-top:30px"><button class="ctrl hangup" onclick="rejectCall()">✕</button><button class="ctrl green" style="width:62px;height:62px" onclick="acceptCall()">📞</button></div></div>
+<div id="callScreen"><div id="voiceUI"><div class="big-av" id="callBigAvatar">K</div><h2 id="callName"></h2><p id="callStatus" style="color:#8696a0;margin-top:10px">Inapiga...</p><p id="callTimer" style="color:#8696a0;margin-top:6px"></p></div><div id="videoUI" style="display:none"><video id="remoteVideo" autoplay playsinline></video><video id="localVideo" autoplay playsinline muted></video><audio id="remoteAudio" autoplay></audio></div><div class="call-controls"><button class="ctrl gray" id="muteBtn" onclick="toggleMute()">🎤</button><button class="ctrl gray" id="btnToVoice" onclick="doSwitchToVoice()">📹</button><button class="ctrl gray" id="btnToVideo" onclick="doSwitchToVideo()" style="display:none">🎥</button><button class="ctrl hangup" onclick="endCall()">✕</button><button class="ctrl gray" onclick="switchCam()">🔄</button></div></div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-let socket=io(),myId,curChat,pc,localStream,callWith,isVideo=false,tInt,sec=0,incOffer,incFrom,incIsVideo;
-function doLogin(){let n=document.getElementById('lName').value.trim(),p=document.getElementById('lPhone').value.trim();if(!n||!p)return alert('Jaza');localStorage.setItem('lila_name',n);localStorage.setItem('lila_phone',p);socket.emit('join',{name:n,phone:p});document.getElementById('login').style.display='none';}
-let sn=localStorage.getItem('lila_name'),sp=localStorage.getItem('lila_phone');if(sn&&sp){document.getElementById('lName').value=sn;document.getElementById('lPhone').value=sp;}
-socket.on('myId',i=>myId=i);
-socket.on('users',list=>{let c=document.getElementById('chatList');c.innerHTML='';list.filter(u=>u.id!==myId).forEach(u=>{let d=document.createElement('div');d.className='chat-item';d.innerHTML=`<div class="avatar">${u.name[0].toUpperCase()}</div><div><div>${u.name}</div><div style="font-size:12px;color:#8696a0">${u.online?'Online':'Offline'}</div></div>`;d.onclick=()=>openChat(u);c.appendChild(d);});});
-function openChat(u){curChat=u.id;document.getElementById('topName').textContent=u.name;document.getElementById('topAv').textContent=u.name[0].toUpperCase();document.getElementById('msgs').innerHTML='';document.getElementById('sidebar').classList.add('hide');socket.emit('getMessages',u.id);}
-function showSidebar(){document.getElementById('sidebar').classList.remove('hide');}
-socket.on('chatHistory',d=>{if(d.withUser!==curChat)return;let b=document.getElementById('msgs');b.innerHTML='';d.msgs.forEach(m=>{let div=document.createElement('div');div.className='bubble '+(m.from===myId?'me':'other');div.textContent=m.text;b.appendChild(div);});});
-socket.on('newMessage',m=>{let o=m.from===myId?m.to:m.from;if(o===curChat){let b=document.getElementById('msgs');let div=document.createElement('div');div.className='bubble '+(m.from===myId?'me':'other');div.textContent=m.text;b.appendChild(div);b.scrollTop=b.scrollHeight;}});
-function sendMsg(){let i=document.getElementById('msgInput');if(!i.value.trim()||!curChat)return;socket.emit('sendMessage',{to:curChat,text:i.value});i.value='';}
-let cfg={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
-async function mkPC(){if(pc)pc.close();pc=new RTCPeerConnection(cfg);pc.ontrack=e=>{console.log('REMOTE TRACK',e.streams[0]);let rv=document.getElementById('remoteVideo');rv.srcObject=e.streams[0];rv.play().catch(()=>{});};pc.onicecandidate=e=>{if(e.candidate&&callWith)socket.emit('ice-candidate',{to:callWith,candidate:e.candidate});};}
-async function makeCall(v){if(!curChat)return alert('Chagua mtu');isVideo=v;callWith=curChat;try{await mkPC();localStream=await navigator.mediaDevices.getUserMedia({video:v,audio:true});document.getElementById('localVideo').srcObject=localStream;localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));let off=await pc.createOffer();await pc.setLocalDescription(off);socket.emit('call-user',{to:callWith,offer:off,isVideo:v});showCall(v,document.getElementById('topName').textContent);}catch(e){alert('Allow camera/mic: '+e.message);}}
-function showCall(v,name){document.getElementById('callScreen').style.display='flex';document.getElementById('callName').textContent=name;document.getElementById('callAv').textContent=name[0].toUpperCase();if(v){document.getElementById('voiceUI').style.display='none';document.getElementById('videoUI').style.display='block';document.getElementById('bVoice').style.display='block';document.getElementById('bVideo').style.display='none';}else{document.getElementById('voiceUI').style.display='flex';document.getElementById('videoUI').style.display='none';document.getElementById('bVoice').style.display='none';document.getElementById('bVideo').style.display='block';}sec=0;clearInterval(tInt);tInt=setInterval(()=>{sec++;document.getElementById('timer').textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');},1000);}
-socket.on('incoming-call',async d=>{incOffer=d.offer;incFrom=d.from;incIsVideo=d.isVideo;callWith=d.from;document.getElementById('incName').textContent=d.fromName;document.getElementById('incAv').textContent=d.fromName[0].toUpperCase();document.getElementById('incType').textContent=d.isVideo?'Video call...':'Voice call...';document.getElementById('incomingModal').style.display='flex';});
-async function accept(){document.getElementById('incomingModal').style.display='none';isVideo=incIsVideo;try{await mkPC();await pc.setRemoteDescription(new RTCSessionDescription(incOffer));localStream=await navigator.mediaDevices.getUserMedia({video:isVideo,audio:true});document.getElementById('localVideo').srcObject=localStream;localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));let ans=await pc.createAnswer();await pc.setLocalDescription(ans);socket.emit('answer-call',{to:incFrom,answer:ans});showCall(isVideo,document.getElementById('incName').textContent);}catch(e){alert(e.message);}}
-function reject(){document.getElementById('incomingModal').style.display='none';socket.emit('end-call',{to:incFrom});}
-socket.on('call-answered',async d=>{await pc.setRemoteDescription(new RTCSessionDescription(d.answer));document.getElementById('callStat').textContent='Imeunganishwa';});
-socket.on('ice-candidate',async c=>{try{await pc.addIceCandidate(new RTCIceCandidate(c));}catch{}});
-socket.on('call-ended',()=>cleanup());
-socket.on('switched-to-voice',()=>{document.getElementById('voiceUI').style.display='flex';document.getElementById('videoUI').style.display='none';document.getElementById('bVoice').style.display='none';document.getElementById('bVideo').style.display='block';});
-socket.on('switched-to-video',async d=>{if(d.offer){await pc.setRemoteDescription(new RTCSessionDescription(d.offer));let a=await pc.createAnswer();await pc.setLocalDescription(a);socket.emit('answer-call',{to:callWith,answer:a});}document.getElementById('voiceUI').style.display='none';document.getElementById('videoUI').style.display='block';document.getElementById('bVoice').style.display='block';document.getElementById('bVideo').style.display='none';});
-async function toVoice(){isVideo=false;if(localStream)localStream.getVideoTracks().forEach(t=>t.stop());document.getElementById('voiceUI').style.display='flex';document.getElementById('videoUI').style.display='none';document.getElementById('bVoice').style.display='none';document.getElementById('bVideo').style.display='block';socket.emit('switch-to-voice',{to:callWith});}
-async function toVideo(){try{let vs=await navigator.mediaDevices.getUserMedia({video:true});let vt=vs.getVideoTracks()[0];localStream.addTrack(vt);let s=pc.getSenders().find(x=>x.track&&x.track.kind==='video');if(s)s.replaceTrack(vt);else pc.addTrack(vt,localStream);document.getElementById('localVideo').srcObject=localStream;document.getElementById('voiceUI').style.display='none';document.getElementById('videoUI').style.display='block';document.getElementById('bVoice').style.display='block';document.getElementById('bVideo').style.display='none';let off=await pc.createOffer();await pc.setLocalDescription(off);socket.emit('switch-to-video',{to:callWith,offer:off});isVideo=true;}catch(e){alert(e.message);}}
-function toggleMute(){if(!localStream)return;localStream.getAudioTracks().forEach(t=>t.enabled=!t.enabled);}
-function end(){if(callWith)socket.emit('end-call',{to:callWith});cleanup();}
-function cleanup(){clearInterval(tInt);document.getElementById('callScreen').style.display='none';document.getElementById('incomingModal').style.display='none';if(localStream)localStream.getTracks().forEach(t=>t.stop());if(pc)pc.close();pc=null;localStream=null;callWith=null;document.getElementById('remoteVideo').srcObject=null;document.getElementById('localVideo').srcObject=null;}
-</script></body></html>
+const socket=io();
+let myId=null, currentChat=null, pc=null, localStream=null, callWith=null, isVideo=false, timer=null, sec=0, incomingOffer=null, incomingFrom=null, incomingIsVideo=false, currentCam="user";
+
+function doLogin(){const n=document.getElementById('lName').value.trim(), p=document.getElementById('lPhone').value.trim(); if(!n||!p) return alert('Jaza jina na namba'); localStorage.setItem('lila_name',n); localStorage.setItem('lila_phone',p); socket.emit('join',{name:n, phone:p}); document.getElementById('login').style.display='none';}
+const sn=localStorage.getItem('lila_name'), sp=localStorage.getItem('lila_phone'); if(sn&&sp){document.getElementById('lName').value=sn; document.getElementById('lPhone').value=sp;}
+socket.on('myId', id=>myId=id);
+socket.on('users', list=>{const c=document.getElementById('chatList'); c.innerHTML=''; list.filter(u=>u.id!==myId).forEach(u=>{const d=document.createElement('div'); d.className='chat-item'+(currentChat===u.id?' active':''); d.innerHTML=`<div class="avatar">${u.name[0].toUpperCase()}</div><div><div style="font-weight:500">${u.name}</div><div style="font-size:13px;color:#8696a0">${u.phone} ${u.online?'• Online':''}</div></div>`; d.onclick=()=>openChat(u); c.appendChild(d);});});
+function openChat(u){currentChat=u.id; document.getElementById('topName').textContent=u.name; document.getElementById('topAvatar').textContent=u.name[0].toUpperCase(); document.getElementById('topStatus').textContent=u.online?'Online':'Offline'; document.getElementById('msgs').innerHTML=''; document.getElementById('sidebar').classList.add('hide'); document.getElementById('mainChat').classList.add('show'); document.getElementById('backBtn').style.display='block'; socket.emit('getMessages', u.id);}
+function showSidebar(){document.getElementById('sidebar').classList.remove('hide'); document.getElementById('mainChat').classList.remove('show');}
+socket.on('chatHistory', d=>{if(d.withUser!==currentChat) return; const b=document.getElementById('msgs'); b.innerHTML=''; d.msgs.forEach(addBubble);});
+socket.on('newMessage', m=>{const o=m.from===myId?m.to:m.from; if(o===currentChat) addBubble(m);});
+function addBubble(m){const b=document.getElementById('msgs'); const div=document.createElement('div'); div.className='bubble '+(m.from===myId?'me':'other'); div.textContent=m.text; b.appendChild(div); b.scrollTop=b.scrollHeight;}
+function sendMsg(){const i=document.getElementById('msgInput'); if(!i.value.trim()||!currentChat) return; socket.emit('sendMessage',{to:currentChat, text:i.value}); i.value='';}
+
+const rtcConfig={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
+
+async function getMedia(video){
+  if(video){
+    try{
+      return await navigator.mediaDevices.getUserMedia({video:{facingMode:currentCam, width:{ideal:640}, height:{ideal:480}}, audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}});
+    }catch(e){
+      return await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+    }
+  }else{
+    return await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true}});
+  }
+}
+
+async function createPC(){
+  if(pc) pc.close();
+  pc=new RTCPeerConnection(rtcConfig);
+  pc.ontrack=e=>{
+    console.log("Track:", e.track.kind);
+    const rv=document.getElementById('remoteVideo');
+    const ra=document.getElementById('remoteAudio');
+    if(e.track.kind==='video'){
+      if(!rv.srcObject) rv.srcObject=e.streams[0];
+      rv.muted=false; rv.volume=1.0;
+      rv.play().catch(()=>{});
+    }
+    if(e.track.kind==='audio'){
+      ra.srcObject=e.streams[0];
+      ra.volume=1.0;
+      ra.play().catch(()=>{
+        document.body.addEventListener('click',()=>ra.play(),{once:true});
+      });
+      // BOOST SAUTI KWA PC
+      try{
+        const ctx=new (window.AudioContext||window.webkitAudioContext)();
+        const src=ctx.createMediaStreamSource(e.streams[0]);
+        const gain=ctx.createGain(); gain.gain.value=2.5;
+        src.connect(gain); gain.connect(ctx.destination);
+      }catch(err){}
+    }
+  };
+  pc.onicecandidate=e=>{if(e.candidate&&callWith) socket.emit('ice-candidate',{to:callWith, candidate:e.candidate});};
+}
+
+async function makeCall(video){
+  if(!currentChat) return alert('Chagua mtu kwanza');
+  isVideo=video; callWith=currentChat; currentCam="user";
+  try{
+    await createPC();
+    localStream=await getMedia(video);
+    document.getElementById('localVideo').srcObject=localStream;
+    localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+    const offer=await pc.createOffer({offerToReceiveAudio:true, offerToReceiveVideo:true});
+    await pc.setLocalDescription(offer);
+    socket.emit('call-user',{to:callWith, offer, isVideo:video});
+    showCallScreen(video, document.getElementById('topName').textContent);
+  }catch(err){alert('Ruhusu kamera/mic: '+err.message);}
+}
+function showCallScreen(video, name){
+  document.getElementById('callScreen').style.display='flex';
+  document.getElementById('callName').textContent=name;
+  document.getElementById('callBigAvatar').textContent=name[0]?.toUpperCase()||'U';
+  document.getElementById('callStatus').textContent=video?'Video call...':'Voice call...';
+  if(video){document.getElementById('voiceUI').style.display='none'; document.getElementById('videoUI').style.display='block'; document.getElementById('btnToVoice').style.display='flex'; document.getElementById('btnToVideo').style.display='none';}
+  else{document.getElementById('voiceUI').style.display='flex'; document.getElementById('videoUI').style.display='none'; document.getElementById('btnToVoice').style.display='none'; document.getElementById('btnToVideo').style.display='flex';}
+  sec=0; clearInterval(timer); timer=setInterval(()=>{sec++; document.getElementById('callTimer').textContent=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');},1000);
+}
+socket.on('incoming-call', async data=>{
+  incomingOffer=data.offer; incomingFrom=data.from; incomingIsVideo=data.isVideo; callWith=data.from;
+  document.getElementById('incName').textContent=data.fromName; document.getElementById('incAvatar').textContent=data.fromName[0].toUpperCase(); document.getElementById('incType').textContent=data.isVideo?'Video call...':'Voice call...';
+  document.getElementById('incomingModal').style.display='flex';
+});
+async function acceptCall(){
+  document.getElementById('incomingModal').style.display='none'; isVideo=incomingIsVideo;
+  try{
+    await createPC();
+    await pc.setRemoteDescription(new RTCSessionDescription(incomingOffer));
+    localStream=await getMedia(isVideo);
+    document.getElementById('localVideo').srcObject=localStream;
+    localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+    const answer=await pc.createAnswer(); await pc.setLocalDescription(answer);
+    socket.emit('answer-call',{to:incomingFrom, answer});
+    showCallScreen(isVideo, document.getElementById('incName').textContent);
+  }catch(e){alert('Shida kamera: '+e.message);}
+}
+function rejectCall(){document.getElementById('incomingModal').style.display='none'; socket.emit('end-call',{to:incomingFrom});}
+socket.on('call-answered', async d=>{await pc.setRemoteDescription(new RTCSessionDescription(d.answer)); document.getElementById('callStatus').textContent='Imeunganishwa';});
+socket.on('ice-candidate', async c=>{try{await pc.addIceCandidate(new RTCIceCandidate(c));}catch(e){}});
+socket.on('call-ended', ()=>doCleanup());
+socket.on('switched-to-voice', ()=>{document.getElementById('voiceUI').style.display='flex'; document.getElementById('videoUI').style.display='none'; document.getElementById('btnToVoice').style.display='none'; document.getElementById('btnToVideo').style.display='flex';});
+socket.on('switched-to-video', async d=>{if(d.offer){await pc.setRemoteDescription(new RTCSessionDescription(d.offer)); const ans=await pc.createAnswer(); await pc.setLocalDescription(ans); socket.emit('answer-call',{to:callWith, answer:ans});} document.getElementById('voiceUI').style.display='none'; document.getElementById('videoUI').style.display='block'; document.getElementById('btnToVoice').style.display='flex'; document.getElementById('btnToVideo').style.display='none';});
+async function doSwitchToVoice(){isVideo=false; if(localStream) localStream.getVideoTracks().forEach(t=>{t.stop(); localStream.removeTrack(t);}); document.getElementById('voiceUI').style.display='flex'; document.getElementById('videoUI').style.display='none'; document.getElementById('btnToVoice').style.display='none'; document.getElementById('btnToVideo').style.display='flex'; socket.emit('switch-to-voice',{to:callWith});}
+async function doSwitchToVideo(){try{const vs=await navigator.mediaDevices.getUserMedia({video:true}); const vt=vs.getVideoTracks()[0]; localStream.addTrack(vt); const sender=pc.getSenders().find(s=>s.track&&s.track.kind==='video'); if(sender) sender.replaceTrack(vt); else pc.addTrack(vt,localStream); document.getElementById('localVideo').srcObject=localStream; document.getElementById('voiceUI').style.display='none'; document.getElementById('videoUI').style.display='block'; document.getElementById('btnToVoice').style.display='flex'; document.getElementById('btnToVideo').style.display='none'; const offer=await pc.createOffer(); await pc.setLocalDescription(offer); socket.emit('switch-to-video',{to:callWith, offer}); isVideo=true;}catch(e){alert(e.message);}}
+function toggleMute(){if(!localStream) return; const at=localStream.getAudioTracks()[0]; if(at){at.enabled=!at.enabled; document.getElementById('muteBtn').textContent=at.enabled?'🎤':'🔇';}}
+async function switchCam(){if(!isVideo) return; currentCam=currentCam==="user"?"environment":"user"; if(localStream) localStream.getVideoTracks().forEach(t=>t.stop()); try{const ns=await getMedia(true); const nt=ns.getVideoTracks()[0]; const sender=pc.getSenders().find(s=>s.track&&s.track.kind==='video'); if(sender) sender.replaceTrack(nt); if(localStream){localStream.getVideoTracks().forEach(t=>localStream.removeTrack(t)); localStream.addTrack(nt);} else localStream=ns; document.getElementById('localVideo').srcObject=localStream;}catch(e){alert(e.message);}}
+function endCall(){if(callWith) socket.emit('end-call',{to:callWith}); doCleanup();}
+function doCleanup(){clearInterval(timer); document.getElementById('callScreen').style.display='none'; document.getElementById('incomingModal').style.display='none'; document.getElementById('callTimer').textContent=''; if(localStream) localStream.getTracks().forEach(t=>t.stop()); if(pc) pc.close(); pc=null; localStream=null; callWith=null; document.getElementById('remoteVideo').srcObject=null; document.getElementById('localVideo').srcObject=null; document.getElementById('remoteAudio').srcObject=null;}
+</script>
+</body>
+</html>
